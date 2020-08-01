@@ -2,6 +2,7 @@
   (:require [clojure.tools.cli :refer [parse-opts]])
   (:require [clojure.string :as string])
   (:require [clojure.java.io :as io])
+  (:require [clojure.pprint :refer [pprint]])
   (:require [sv.parse :as parse]))
 
 (def opts
@@ -81,5 +82,5 @@
     (if exit-message
       (exit (if ok? 0 1) exit-message)
       (if parse?
-        (exit 0 (parse/combine-parse-results (map parse-filename filenames)))
+        (exit 0 (pprint (parse/combine-parse-results (map parse-filename filenames))))
         (exit 0 nil)))))
