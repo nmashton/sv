@@ -82,5 +82,5 @@
     (if exit-message
       (exit (if ok? 0 1) exit-message)
       (if parse?
-        (exit 0 (pprint (first (parse/combine-parse-results (map parse-filename filenames)))))
+        (exit 0 (pprint (parse/combine-parse-results (map parse-filename filenames))))
         (exit 0 nil)))))

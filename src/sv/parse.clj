@@ -28,16 +28,16 @@
 (s/def ::result (s/cat ::data (s/nilable (s/coll-of ::parsed))
                        ::errors (s/nilable (s/coll-of ::error))))
 (s/fdef parse-result->record
-        :args (s/cat :result ::validated-data)
-        :ret :sv.model/record)
+  :args (s/cat :result ::validated-data)
+  :ret :sv.model/record)
 (s/fdef parse-lines
   :args (s/cat :lines (s/coll-of string?)
                :separator string?)
   :ret ::result
-        :fn (fn [{:keys [args ret]}]
-              (= (count (:lines args))
-                 (+ (count (::data ret))
-                    (count (::errors ret))))))
+  :fn (fn [{:keys [args ret]}]
+        (= (count (:lines args))
+           (+ (count (::data ret))
+              (count (::errors ret))))))
 
 (defn parse-result->record
   "Applies whatever transformations are necessary to
@@ -45,10 +45,10 @@
    the expected form."
   [result]
   (as-> result result
-      (assoc result
-             :sv.model/date-of-birth
-             (date-string->local-date (::date-of-birth result)))
-      (dissoc result ::date-of-birth)))
+    (assoc result
+           :sv.model/date-of-birth
+           (date-string->local-date (::date-of-birth result)))
+    (dissoc result ::date-of-birth)))
 
 (defn validate-and-parse
   "Returns a map that tags the results of applying
@@ -94,7 +94,24 @@
     (map-indexed (fn [i val] (assoc val ::line-number i)))
     lines)))
 
+(defn prep-for-cmd
+  "Given data with the shape of the output of parse-lines
+   and a filename with which to tag results, returns
+   a pair containing:
+   
+   1. the sequence of records extracted from the file
+   2. a pair containing:
+   2a. the filename
+   2b. the sorted sequence of lines with errors"
+  [[results errors] filename]
+  [(map ::data results)
+   [filename (->> errors
+                  (map ::line-number)
+                  set
+                  sort)]])
+
 (defn parse-file
   [filename separator]
   (with-open [r (io/reader filename)]
-    (parse-lines (line-seq r) separator)))
+    (prep-for-cmd (parse-lines (line-seq r) separator)
+                  filename)))
