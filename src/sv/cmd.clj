@@ -1,6 +1,8 @@
 (ns sv.cmd
   (:require [clojure.tools.cli :refer [parse-opts]])
-  (:require [clojure.string :as string]))
+  (:require [clojure.string :as string])
+  (:require [clojure.java.io :as io])
+  (:require [sv.parse :as parse]))
 
 (def opts
   [["-s" "--sort-by" "Sort by (gender, date-asc, date-desc)"
@@ -44,7 +46,14 @@
 
 (defn filenames->errors
   [filenames]
-  (filter #(not (filename->fmt %)) filenames))
+  (filter
+   #(not (and (filename->fmt %)
+              (.exists (io/file %))))
+   filenames))
+
+(defn parse-filename
+  [filename]
+  (parse/parse-file filename (get separators (filename->fmt filename))))
 
 (defn validate-args
   [args]
@@ -56,7 +65,7 @@
       (not (seq args))
       {:exit-message (error-msg ["Missing filename arguments."])}
       (seq (filenames->errors args))
-      {:exit-message (error-msg (map #(str "Bad filename: " %)
+      {:exit-message (error-msg (map #(str "Bad filename or file not found: " %)
                                      (filenames->errors args)))}
       :else {:parse? true
              :filenames args
@@ -68,9 +77,9 @@
   (System/exit status))
 
 (defn -main [& args]
-  (let [{:keys [exit-message ok? parse? filenames options]} (validate-args args)]
+  (let [{:keys [exit-message ok? parse? filenames]} (validate-args args)]
     (if exit-message
       (exit (if ok? 0 1) exit-message)
       (if parse?
-        (exit 0 [filenames options])
+        (exit 0 (map parse-filename filenames))
         (exit 0 nil)))))
