@@ -53,6 +53,8 @@
       (:help options) {:exit-message (help-message summary)
                        :ok? true}
       errors {:exit-message (error-msg errors)}
+      (not (seq args))
+      {:exit-message (error-msg ["Missing filename arguments."])}
       (seq (filenames->errors args))
       {:exit-message (error-msg (map #(str "Bad filename: " %)
                                      (filenames->errors args)))}
@@ -69,4 +71,6 @@
   (let [{:keys [exit-message ok? parse? filenames options]} (validate-args args)]
     (if exit-message
       (exit (if ok? 0 1) exit-message)
-      (exit 0 [parse? filenames options]))))
+      (if parse?
+        (exit 0 [filenames options])
+        (exit 0 nil)))))
