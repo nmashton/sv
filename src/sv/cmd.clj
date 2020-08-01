@@ -3,7 +3,7 @@
   (:require [clojure.string :as string]))
 
 (def opts
-  [["-s" "--sort-by" "Sort by"
+  [["-s" "--sort-by" "Sort by (gender, date-asc, date-desc)"
     :default "gender"
     :parse-fn keyword
     :validate #{"gender"
@@ -11,7 +11,23 @@
                 "date-desc"}]
    ["-i" "--ignore-errors" "Ignore errors"
     :default false]
-   ["-h" "--help"]])
+   ["-h" "--help" "Display this help message"]])
+
+(def separators
+  {:csv ","
+   :psv "|"
+   :ssv " "})
+
+(defn help-message
+  [options-summary]
+  (->> ["Prints a collection of records extracted from a file in"
+        "a 'separated values' format (comma-separated, pipe-separated,"
+        "or space-separated), sorted according to either gender,"
+        "date ascending, or date descending."
+        ""
+        "Options:"
+        options-summary]
+       (string/join \newline)))
 
 (defn error-msg
   [errors]
@@ -32,9 +48,9 @@
 
 (defn validate-args
   [args]
-  (let [{:keys [options errors]} (parse-opts args opts)]
+  (let [{:keys [options errors summary]} (parse-opts args opts)]
     (cond
-      (:help options) {:exit-message "TODO: add a helpful message"
+      (:help options) {:exit-message (help-message summary)
                        :ok? true}
       errors {:exit-message (error-msg errors)}
       (seq (filenames->errors args))
