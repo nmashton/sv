@@ -1,6 +1,6 @@
 Ashton,Neil,nonbinary,indigo,08/16/1984
-malformed,line
 Blashton,Neil,male,crimson,08/16/1984
+malformed,line
 Clashton,Neil,male,crimson,08/16/1984,malforming
-Plashton,Neil,fireman,crimson,08/16/1984
+Plashton,Neil,not_a_valid_gender,crimson,08/16/1984
 Smashton,Neil,male,crimson,bad date

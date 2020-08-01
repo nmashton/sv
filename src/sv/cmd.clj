@@ -55,6 +55,17 @@
   [filename]
   (parse/parse-file filename (get separators (filename->fmt filename))))
 
+(defn combine-parse-results
+  "Given a sequence of results-errors pairs of the type returned
+   by parse/parse-file, combine them into a single big pair."
+  [results-and-errors]
+  (reduce
+   (fn [[rs es] [next-rs next-es]]
+     [(concat rs next-rs)
+      (concat es next-es)])
+   [nil nil]
+   results-and-errors))
+
 (defn validate-args
   [args]
   (let [{:keys [options errors summary]} (parse-opts args opts)]
@@ -81,5 +92,5 @@
     (if exit-message
       (exit (if ok? 0 1) exit-message)
       (if parse?
-        (exit 0 (map parse-filename filenames))
+        (exit 0 (combine-parse-results (map parse-filename filenames)))
         (exit 0 nil)))))
