@@ -60,6 +60,17 @@
       {::errors (s/explain-data spec value)}
       {::data (parse-result->record parsed)})))
 
+(defn combine-parse-results
+  "Given a sequence of results-errors pairs of the type returned
+   by parse/parse-file, combine them into a single big pair."
+  [results-and-errors]
+  (reduce
+   (fn [[rs es] [next-rs next-es]]
+     [(concat rs next-rs)
+      (concat es next-es)])
+   [nil nil]
+   results-and-errors))
+
 (defn combine-results
   "Reducer function to combine all results
    of parsing into two vectors (valid results
