@@ -56,8 +56,9 @@
       (seq (filenames->errors args))
       {:exit-message (error-msg (map #(str "Bad filename: " %)
                                      (filenames->errors args)))}
-      :else {:exit-message "TODO: add useful behavior"
-             :ok? true})))
+      :else {:parse? true
+             :filenames args
+             :options options})))
 
 (defn exit
   [status msg]
@@ -65,7 +66,7 @@
   (System/exit status))
 
 (defn -main [& args]
-  (let [{:keys [exit-message ok?]} (validate-args args)]
+  (let [{:keys [exit-message ok? parse? filenames options]} (validate-args args)]
     (if exit-message
       (exit (if ok? 0 1) exit-message)
-      "TODO: add action handlers")))
+      (exit 0 [parse? filenames options]))))
