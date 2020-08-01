@@ -43,3 +43,15 @@
    :gender gender
    :favorite-color favorite-color
    :date-of-birth (jt/format "MM/dd/yyyy" date-of-birth)})
+
+(defn sort-by-gender-and-last-name
+  [records]
+  (sort-by #(vec [(::gender %) (::last-name %)])
+           records))
+
+(defn sort-by-date-asc
+  [records]
+  (sort-by ::date-of-birth records))
+
+(def sort-by-date-desc
+  (comp reverse sort-by-date-asc))
