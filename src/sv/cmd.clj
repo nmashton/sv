@@ -1,12 +1,24 @@
 (ns sv.cmd
-  (:require [clojure.tools.cli :refer [parse-opts]]))
+  (:require [clojure.tools.cli :refer [parse-opts]])
+  (:require [clojure.string :as string]))
 
 (def opts
-  [["-f" "--format FORMAT" "File format"
-    :default "csv"
-    :parse-fn keyword
-    :validate [#(contains? ["csv" "psv" "ssv"] %)
-               "Must be one of csv, psv, or ssv"]]])
+  [["-i" "--ignore-errors" "Ignore errors"
+    :default false]
+   ["-h" "--help"]])
+
+(defn error-msg
+  [errors]
+  (str "The following errors occurred while parsing your command:\n\n"
+       (string/join \newline errors)))
+
+(defn validate-args
+  [args]
+  (let [{:keys [options errors]} (parse-opts args opts)]
+    (cond
+      (:help options) "TODO: add a helpful message"
+      errors (error-msg errors)
+      :else "TODO: add useful behavior")))
 
 (defn -main [& args]
-  (println (parse-opts args opts)))
+  (println (validate-args args)))
