@@ -17,7 +17,7 @@
 
 (def separators
   {:csv ","
-   :psv "|"
+   :psv "[|]"
    :ssv " "})
 
 (defn help-message
