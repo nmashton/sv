@@ -1,10 +1,11 @@
 (ns sv.api
   (:require [clojure.tools.cli :refer [parse-opts]])
-  (:require [clojure.pprint :refer [pprint]])
   (:require [clojure.string :as string])
   (:require [ring.adapter.jetty :as jetty])
   (:require [compojure.core :refer [defroutes GET]])
   (:require [compojure.route :as route])
+  (:require [cheshire.core :refer [generate-string]])
+  (:require [sv.model :as model])
   (:require [sv.parse :as parse])
   (:require [sv.file :as file]))
 
@@ -50,8 +51,11 @@
     {_sort :sort-by} :options}]
   ;; (swap! store #(conj % sort))
   {:status 200
-   :headers {"content-type" "text/clojure"}
-   :body (with-out-str (pprint @store))})
+   :headers {"content-type" "application/json"}
+   :body (str
+          (generate-string (map model/record->display @store)
+                           {:pretty true})
+          "\n")})
 
 (def not-found
   {:status 404
