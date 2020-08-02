@@ -10,12 +10,7 @@
   (:require [sv.file :as file]))
 
 (def opts
-  [["-s" "--sort-by SORT-TYPE" "Sort by (gender, date-asc, date-desc)"
-    :default :gender
-    :parse-fn keyword
-    :validate [#{:gender :date-asc :date-desc}
-               "Must be one of gender, date-asc, or date-desc"]]
-   ["-h" "--help" "Display this help message"]])
+  [["-h" "--help" "Display this help message"]])
 
 (defn help-message
   [options-summary]
@@ -38,22 +33,20 @@
       (:help options) {:exit-message (help-message summary)
                        :ok? true}
       errors {:exit-message (error-msg errors)}
-      :else {:start-server? true
-             :options options})))
+      :else {:start-server? true})))
 
 (defn exit
   [status msg]
   (println msg)
   (System/exit status))
 
-(defn handler
+(defn display-records-handler
   [{store :store
-    {_sort :sort-by} :options}]
-  ;; (swap! store #(conj % sort))
+    sort-by :sort-by}]
   {:status 200
    :headers {"content-type" "application/json"}
    :body (str
-          (generate-string (map model/record->display @store)
+          (generate-string (map model/record->display (sort-by @store))
                            {:pretty true})
           "\n")})
 
@@ -62,11 +55,26 @@
    :headers {"content-type" "text/html"}
    :body "Not found\n"})
 
+(defn sorted-or-404
+  "Display the records in the store according to
+   the sort scheme given in the parameters or return
+   404 if the sort scheme is invalid."
+  [req sort-by]
+  (if-let [sorter (get file/sorters (keyword sort-by))]
+    (display-records-handler (assoc req :sort-by sorter))
+    not-found))
+
 (defroutes records-api
-  (GET "/records/:sort" req (handler req))
+  (GET "/records/:sort-by"
+    {{sort-by :sort-by} :params
+     :as req}
+    (sorted-or-404 req sort-by))
   (route/not-found not-found))
 
 (defn with-extra
+  "Add some extra data to the handler's context.
+   Useful for passing in (for example) some simple
+   server state."
   [handler key val]
   (fn [req]
     (handler (assoc req key val))))
@@ -83,14 +91,14 @@
     (sorter records)))
 
 (defn -main [& args]
-  (let [{:keys [exit-message ok? start-server? options]} (validate-args args)]
+  (let [{:keys [exit-message
+                ok?
+                start-server?]} (validate-args args)]
     (if exit-message
       (exit (if ok? 0 1) exit-message)
       (if start-server?
         (let [store (atom (init-data))]
           (jetty/run-jetty
-           (-> records-api
-               (with-extra :store store)
-               (with-extra :options options))
+           (with-extra records-api :store store)
            {:port 3000}))
         (exit 0 nil)))))
