@@ -39,6 +39,17 @@
             (gen-nonempty-vector
              gen-nonempty-int-string)))
 
+(defn date-gen
+  []
+  (gen/fmap #(apply jt/local-date
+                    (let [date (jt/java-date (* 100000000 %))]
+                      [(.getYear date)
+                       (inc (.getMonth date))
+                       (inc (.getDay date))]))
+            (gen/such-that
+             #(< 0 %)
+             (gen/int))))
+
 (s/fdef date-string->local-date
   :args (s/cat :date-string
                (s/with-gen

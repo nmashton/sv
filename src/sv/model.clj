@@ -1,6 +1,6 @@
 (ns sv.model
   (:require [clojure.spec.alpha :as s])
-  (:require [sv.util :refer [date-string-gen]])
+  (:require [sv.util :refer [date-string-gen date-gen]])
   (:require [java-time :as jt]))
 
 (s/def ::last-name string?)
@@ -9,7 +9,9 @@
                   "male"
                   "nonbinary"
                   "other"})
-(s/def ::date-of-birth #(instance? java.time.LocalDate %))
+(s/def ::date-of-birth (s/with-gen
+                        #(instance? java.time.LocalDate %)
+                        date-gen))
 (s/def ::favorite-color string?)
 
 (s/def ::record
