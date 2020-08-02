@@ -42,8 +42,7 @@
   (System/exit status))
 
 (defn display-records-handler
-  [{store :store
-    sort-by :sort-by}]
+  [{:keys [store sort-by]}]
   {:status 200
    :headers {"content-type" "application/json"}
    :body (str
@@ -65,8 +64,15 @@
     (display-records-handler (assoc req :sort-by sorter))
     not-found))
 
+(defn add-or-400
+  [{:keys [_store] :as req}]
+  (if-let [fmt (file/guess-format (body-string req))]
+    (str "file looked fine, format: " fmt "\n")
+    {:status 400
+     :body (str "file looked bad" "\n")}))
+
 (defroutes records-api
-  (POST "/records/" req (str "You posted some data:" (body-string req) "\n"))
+  (POST "/records/" req (add-or-400 req))
   (GET "/records/:sort-by"
     {{sort-by :sort-by} :params
      :as req}
