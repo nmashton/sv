@@ -59,28 +59,40 @@
   "Display the records in the store according to
    the sort scheme given in the parameters or return
    404 if the sort scheme is invalid."
-  [req sort-by]
+  [{{sort-by :sort-by} :params
+    :as req}]
   (if-let [sorter (get file/sorters (keyword sort-by))]
     (display-records-handler (assoc req :sort-by sorter))
     not-found))
 
 (defn add-or-400
-  [{:keys [_store] :as req}]
+  "Attempt to add some submitted data to the store and
+   echo back the resulting record (in display format)
+   on success.
+   
+   Tries to guess the format of the input line using
+   file/guess-format, and if this fails, returns a 400.
+   
+   Having guessed the format of the input line, tries
+   to parse it, and if this fails, returns a 400. If
+   it succeeds, adds it to the store and echoes back
+   the result."
+  [{:keys [store] :as req}]
   (let [raw-line (body-string req)]
     (if-let [fmt (file/guess-format raw-line)]
       (let [{data :sv.parse/data} (parse/parse-raw-line raw-line (get file/separators fmt))]
         (if data
-          (str data "\n")
-          (str "Errors in input\n")))
+          (do
+            (swap! store #(conj % data))
+            (str (generate-string (model/record->display data)) "\n"))
+          {:status 400
+           :body "Errors in input\n"}))
       {:status 400
-       :body (str "Can't guess input format" "\n")})))
+       :body "Can't guess input format\n"})))
 
 (defroutes records-api
   (POST "/records/" req (add-or-400 req))
-  (GET "/records/:sort-by"
-    {{sort-by :sort-by} :params
-     :as req}
-    (sorted-or-404 req sort-by))
+  (GET "/records/:sort-by" req (sorted-or-404 req))
   (route/not-found not-found))
 
 (defn with-extra
