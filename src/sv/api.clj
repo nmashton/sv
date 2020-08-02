@@ -66,10 +66,14 @@
 
 (defn add-or-400
   [{:keys [_store] :as req}]
-  (if-let [fmt (file/guess-format (body-string req))]
-    (str "file looked fine, format: " fmt "\n")
-    {:status 400
-     :body (str "file looked bad" "\n")}))
+  (let [raw-line (body-string req)]
+    (if-let [fmt (file/guess-format raw-line)]
+      (let [{data :sv.parse/data} (parse/parse-raw-line raw-line (get file/separators fmt))]
+        (if data
+          (str data "\n")
+          (str "Errors in input\n")))
+      {:status 400
+       :body (str "Can't guess input format" "\n")})))
 
 (defroutes records-api
   (POST "/records/" req (add-or-400 req))

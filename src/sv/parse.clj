@@ -94,6 +94,14 @@
     (map-indexed (fn [i val] (assoc val ::line-number i)))
     lines)))
 
+(defn parse-raw-line
+  "Apply the same parsing logic as is found in parse-lines
+   to a raw line of text."
+  [raw-line separator]
+  (as-> raw-line line
+      (string/split line (re-pattern separator))
+      (validate-and-parse ::line line)))
+
 (defn prep-for-cmd
   "Given data with the shape of the output of parse-lines
    and a filename with which to tag results, returns
