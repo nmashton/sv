@@ -2,7 +2,8 @@
   (:require [clojure.tools.cli :refer [parse-opts]])
   (:require [clojure.string :as string])
   (:require [ring.adapter.jetty :as jetty])
-  (:require [compojure.core :refer [defroutes GET]])
+  (:require [ring.util.request :refer [body-string]])
+  (:require [compojure.core :refer [defroutes GET POST]])
   (:require [compojure.route :as route])
   (:require [cheshire.core :refer [generate-string]])
   (:require [sv.model :as model])
@@ -65,6 +66,7 @@
     not-found))
 
 (defroutes records-api
+  (POST "/records/" req (str "You posted some data:" (body-string req) "\n"))
   (GET "/records/:sort-by"
     {{sort-by :sort-by} :params
      :as req}
