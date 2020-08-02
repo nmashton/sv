@@ -9,6 +9,7 @@
                  [org.clojure/test.check "1.1.0"]
                  [ring/ring-core "1.8.1"]
                  [ring/ring-jetty-adapter "1.6.3"]
+                 [compojure "1.6.1"]
                  [clojure.java-time "0.3.2"]]
   :profiles {:cmd {:main sv.cmd}
              :api {:main sv.api}}

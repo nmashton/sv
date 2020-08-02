@@ -1,5 +1,7 @@
 (ns sv.api
-  (:require [ring.adapter.jetty :as jetty]))
+  (:require [ring.adapter.jetty :as jetty])
+  (:require [compojure.core :refer [defroutes GET]])
+  (:require [compojure.route :as route]))
 
 
 (defn handler
@@ -14,8 +16,17 @@
   (fn [req]
     (handler (assoc req :store store))))
 
+(def not-found
+  {:status 404
+   :headers {"content-type" "text/html"}
+   :body "Not found\n"})
+
+(defroutes records-api
+  (GET "/records/:sort" req (handler req))
+  (route/not-found not-found))
+
 (defn -main []
   (let [store (atom [])]
     (jetty/run-jetty
-     (with-store handler store)
+     (with-store records-api store)
      {:port 3000})))
