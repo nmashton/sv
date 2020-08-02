@@ -34,7 +34,8 @@
       (:help options) {:exit-message (help-message summary)
                        :ok? true}
       errors {:exit-message (error-msg errors)}
-      :else {:start-server? true})))
+      :else {:start-server? true
+             :options options})))
 
 (defn exit
   [status msg]
@@ -42,16 +43,12 @@
   (System/exit status))
 
 (defn handler
-  [{store :store}]
-  (swap! store #(conj % :foo))
+  [{store :store
+    {sort :sort-by} :options}]
+  (swap! store #(conj % sort))
   {:status 200
    :headers {"content-type" "text/clojure"}
    :body (str @store "\n")})
-
-(defn with-store
-  [handler store]
-  (fn [req]
-    (handler (assoc req :store store))))
 
 (def not-found
   {:status 404
@@ -62,13 +59,20 @@
   (GET "/records/:sort" req (handler req))
   (route/not-found not-found))
 
+(defn with-extra
+  [handler key val]
+  (fn [req]
+    (handler (assoc req key val))))
+
 (defn -main [& args]
-  (let [{:keys [exit-message ok? start-server?]} (validate-args args)]
+  (let [{:keys [exit-message ok? start-server? options]} (validate-args args)]
     (if exit-message
       (exit (if ok? 0 1) exit-message)
       (if start-server?
         (let [store (atom [])]
           (jetty/run-jetty
-           (with-store records-api store)
+           (-> records-api
+               (with-extra :store store)
+               (with-extra :options options))
            {:port 3000}))
         (exit 0 nil)))))
