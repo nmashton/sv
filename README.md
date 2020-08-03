@@ -7,13 +7,64 @@ A simple Clojure app to do two things:
 
 ## Usage
 
+This app can be run in either of two ways.
+
 ### Command-line utility
 
-(TBD.)
+Use the `cli` profile to run the command line interface version of the app,
+which will show a tabular view of records:
+
+```
+$ lein cli -- --ignore-errors resources/test.csv resources/test.psv resources/test.ssv --sort-by date-asc
+```
+
+If the `--ignore-errors` flag is not included and the files provided are malformed,
+the app will refuse to proceed. Valid data meets the following criteria:
+
+- The file extension is one of .csv, .psv, or .ssv
+- A file with a given extension contains five pieces of data per line, separated
+  by the appropriate separator: "," for .csv, "|" for .psv, and " " for .csv
+- The fields are in the order: last name, first name, gender, favorite color, birthday
+- Gender is one of "male", "female", or "nonbinary"
+- Birthday is in the format MM/dd/yyyy (e.g. "08/16/1984")
+
+To see a list of available options, run `lein cli -- --help`.
 
 ### Web API
 
-(TBD.)
+Use the `api` profile to run the API version of the app, which will expose
+a simple endpoint to access and add to a set of records (with a default
+port of 3000):
+
+```
+$ lein api -- --port 8080
+```
+
+To see the available records:
+
+```
+$ curl http://localhost:3000/records/gender
+$ curl http://localhost:3000/records/date-asc
+$ curl http://localhost:3000/records/date-desc
+```
+
+To add a record, POST a line of plain text in the formats described in
+the "Command-line utility" section of this README to the `/records/` endpoint.
+If successful, the resulting entity will be echoed back at you:
+
+```
+$ curl -X POST -H "Content-Type: text/plain" --data "West,Iris,female,blue,02/23/1976" http://localhost:3000/records/
+$ curl -X POST -H "Content-Type: text/plain" --data "West|Wally|male|yellow|02/23/1986" http://localhost:3000/records/
+$ curl -X POST -H "Content-Type: text/plain" --data "Allen Barry male red 05/13/1978" http://localhost:3000/records/
+```
+
+If there are problems with the input (see the previous section for possible issues),
+"Errors in input" will be echoed back:
+
+```
+$ curl -X POST -H "Content-Type: text/plain" --data "Thawne Eobard male green 05-12-2478" http://localhost:3000/records/
+Errors in input
+```
 
 ## License
 

@@ -62,7 +62,7 @@
         sorter (model/sorter-for-key)]
     (sorter records)))
 
-(defn handler
+(defn init-handler
   []
   (let [store (atom (init-data))]
     (with-extra records-api :store store)))
