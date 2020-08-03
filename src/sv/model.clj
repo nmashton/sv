@@ -78,5 +78,5 @@
   [record]
   (-> record
       record->display
-      (generate-string {:pretty true})
+      generate-string
       (str \newline)))
