@@ -40,9 +40,9 @@
       errors {:exit-message (error-msg errors)}
       (not (seq args))
       {:exit-message (error-msg ["Missing filename arguments."])}
-      (seq (file/filenames->errors arguments))
+      (seq (file/filenames-with-errors arguments))
       {:exit-message (error-msg (map #(str "Bad filename or file not found: " %)
-                                     (file/filenames->errors arguments)))}
+                                     (file/filenames-with-errors arguments)))}
       :else {:parse? true
              :filenames arguments
              :options options})))

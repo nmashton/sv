@@ -110,7 +110,9 @@
 
 (defn init-data
   []
-  (let [[records _errors] (parse/combine-parse-results (map file/parse-filename default-filenames))
+  (let [[records _errors]
+        (parse/combine-parse-results (map file/parse-filename
+                                          default-filenames))
         sorter (get model/sorters :default)]
     (sorter records)))
 

@@ -23,7 +23,10 @@
     (re-matches #"^(\S+ ){4}\S+$" raw-line) ::ssv
     :else nil))
 
-(defn filenames->errors
+(defn filenames-with-errors
+  "Given a list of filenames, returns any that had problems,
+   either because their format couldn't be guessed from their
+   name or because they did not actually exist."
   [filenames]
   (filter
    #(not (and (filename->fmt %)

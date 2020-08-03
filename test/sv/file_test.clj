@@ -17,14 +17,14 @@
   (is (nil? (file/guess-format "not a valid ssv")))
   (is (nil? (file/guess-format "just ..... some gibberish"))))
 
-(deftest filenames->errors
-  (is (file/filenames->errors ["foo.bar"]))
+(deftest filenames-with-errors
+  (is (file/filenames-with-errors ["foo.bar"]))
   (is (not (empty (let [temp-file (java.io.File/createTempFile "file" ".bad-extension")]
                     (try
-                      (file/filenames->errors [(.getAbsolutePath temp-file)])
+                      (file/filenames-with-errors [(.getAbsolutePath temp-file)])
                       (finally (.delete temp-file)
                                nil))))))
   (is (empty? (let [temp-file (java.io.File/createTempFile "file" ".csv")]
                 (try
-                  (doall (file/filenames->errors [(.getAbsolutePath temp-file)]))
+                  (doall (file/filenames-with-errors [(.getAbsolutePath temp-file)]))
                   (finally (.delete temp-file)))))))
