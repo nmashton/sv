@@ -12,9 +12,9 @@
                  [cheshire "5.10.0"]
                  [compojure "1.6.1"]
                  [clojure.java-time "0.3.2"]]
-  :profiles {:cmd {:main sv.cmd}
-             :api {:main sv.api}}
-  :aliases {"cmd" ["with-profile" "cmd" "run"]
+  :profiles {:cli {:main sv.cmd.cli}
+             :api {:main sv.cmd.api}}
+  :aliases {"cli" ["with-profile" "cli" "run"]
             "api" ["with-profile" "api" "run"]}
   :plugins [[lein-cloverage "1.1.2"]]
   :repl-options {:init-ns sv.core})

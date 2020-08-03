@@ -1,4 +1,4 @@
-(ns sv.cmd
+(ns sv.cmd.cli
   (:require [clojure.pprint :refer [print-table]]
             [clojure.string :as string]
             [clojure.tools.cli :refer [parse-opts]]

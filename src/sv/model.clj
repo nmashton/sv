@@ -58,7 +58,20 @@
 (def sort-by-date-desc
   (comp reverse sort-by-date-asc))
 
-(def sorters
+(def -sorters
   {:gender sort-by-gender-and-last-name
    :date-asc sort-by-date-asc
-   :date-desc sort-by-date-desc})
+   :date-desc sort-by-date-desc
+   :default sort-by-gender-and-last-name})
+
+(defn sorter-for-key
+  ([]
+   sort-by-gender-and-last-name)
+  ([sort-key]
+   (if-let [sorter (get -sorters sort-key)]
+     sorter
+     (sorter-for-key)))
+  ([sort-key default]
+   (if-let [sorter (get -sorters sort-key)]
+     sorter
+     default)))

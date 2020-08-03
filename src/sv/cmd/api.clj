@@ -1,4 +1,4 @@
-(ns sv.api
+(ns sv.cmd.api
   (:require [cheshire.core :refer [generate-string]]
             [clojure.string :as string]
             [clojure.tools.cli :refer [parse-opts]]
@@ -61,7 +61,7 @@
    404 if the sort scheme is invalid."
   [{{sort-by :sort-by} :params
     :as req}]
-  (if-let [sorter (get model/sorters (keyword sort-by))]
+  (if-let [sorter (model/sorter-for-key (keyword sort-by) nil)]
     (display-records-handler (assoc req :sort-by sorter))
     not-found))
 
@@ -113,7 +113,7 @@
   (let [[records _errors]
         (parse/combine-parse-results (map file/parse-filename
                                           default-filenames))
-        sorter (get model/sorters :default)]
+        sorter (model/sorter-for-key)]
     (sorter records)))
 
 (defn -main [& args]
