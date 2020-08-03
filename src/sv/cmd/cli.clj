@@ -1,9 +1,8 @@
 (ns sv.cmd.cli
-  (:require [clojure.pprint :refer [print-table]]
-            [clojure.tools.cli :refer [parse-opts]]
+  (:require [clojure.tools.cli :refer [parse-opts]]
+            [sv.cli :refer [check-filenames
+                            handle-filenames]]
             [sv.file :as file]
-            [sv.model :as model]
-            [sv.parse :as parse]
             [sv.util :refer [error-msg exit help-message]]))
 
 (def opts
@@ -32,29 +31,20 @@
       errors {:exit-message (error-msg errors)}
       (not (seq args))
       {:exit-message (error-msg ["Missing filename arguments."])}
-      (seq (file/filenames-with-errors arguments))
+      (check-filenames arguments)
       {:exit-message (error-msg (map #(str "Bad filename or file not found: " %)
                                      (file/filenames-with-errors arguments)))}
       :else {:parse? true
              :filenames arguments
              :options options})))
 
-(defn handle-filenames
-  [filenames options]
-  (let [[records errors] (parse/combine-parse-results (map parse/parse-filename filenames))
-        sorter (model/sorter-for-key (:sort-by options))]
-    (if (and (seq errors)
-             (not (:ignore-errors options)))
-      (exit 1 (error-msg ["Some files had errors."])) ; TODO: say more!!
-      (exit 0 (with-out-str
-                (print-table (->> records
-                                  sorter
-                                  (map model/record->display))))))))
-
 (defn -main [& args]
   (let [{:keys [exit-message ok? parse? filenames options]} (validate-args args)]
     (if exit-message
       (exit (if ok? 0 1) exit-message)
       (if parse?
-        (handle-filenames filenames options)
+        (let [{:keys [error output]} (handle-filenames filenames options)]
+          (if error
+            (exit 1 (error-msg [error]))
+            (exit 0 output)))
         (exit 0 nil)))))
