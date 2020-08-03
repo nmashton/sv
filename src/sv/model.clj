@@ -1,8 +1,7 @@
 (ns sv.model
   (:require [cheshire.core :refer [generate-string]]
             [clojure.spec.alpha :as s]
-            [java-time :as jt]
-            [sv.util :refer [date-string-gen date-gen]]))
+            [java-time :as jt]))
 
 (s/def ::last-name string?)
 (s/def ::first-name string?)
@@ -10,9 +9,7 @@
                   "male"
                   "nonbinary"
                   "other"})
-(s/def ::date-of-birth (s/with-gen
-                        #(instance? java.time.LocalDate %)
-                        date-gen))
+(s/def ::date-of-birth #(instance? java.time.LocalDate %))
 (s/def ::favorite-color string?)
 
 (s/def ::record
@@ -22,9 +19,9 @@
                 ::favorite-color
                 ::date-of-birth]))
 
-(s/def :sv.display/date-of-birth (s/with-gen
-                                   string?
-                                   date-string-gen))
+(s/def :sv.display/date-of-birth
+  (s/and string?
+         #(re-matches #"\d+/\d+/\d+" %)))
 (s/def ::display
   (s/keys :req-un [::last-name
                    ::first-name
