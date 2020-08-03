@@ -23,27 +23,27 @@
          (map :sv.model/last-name
               (model/sort-by-gender-and-last-name example-records)))))
 
-(deftest sort-by-date-asc
+(deftest sort-by-birthdate
   (is (= ["Dashton" "Cashton" "Bashton" "Ashton"]
          (map :sv.model/last-name
-              (model/sort-by-date-asc example-records)))))
+              (model/sort-by-birthdate example-records)))))
 
-(deftest sort-by-date-desc
-  (is (= ["Ashton" "Bashton" "Cashton" "Dashton"]
+(deftest sort-by-name
+  (is (= ["Dashton" "Cashton" "Bashton" "Ashton"]
          (map :sv.model/last-name
-              (model/sort-by-date-desc example-records)))))
+              (model/sort-by-name example-records)))))
 
 (deftest sorter-for-key
   ; default
-  (is (= ["Bashton" "Ashton" "Dashton" "Cashton"]
+  (is (= ["Dashton" "Cashton" "Bashton" "Ashton"]
          (map :sv.model/last-name
               ((model/sorter-for-key) example-records))))
   ; with key
   (is (= ["Dashton" "Cashton" "Bashton" "Ashton"]
          (map :sv.model/last-name
-              ((model/sorter-for-key :date-asc) example-records))))
+              ((model/sorter-for-key :birthdate) example-records))))
   ; bad key -> default
-  (is (= ["Bashton" "Ashton" "Dashton" "Cashton"]
+  (is (= ["Dashton" "Cashton" "Bashton" "Ashton"]
          (map :sv.model/last-name
               ((model/sorter-for-key :bad-key) example-records)))))
 

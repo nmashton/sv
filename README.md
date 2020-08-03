@@ -16,7 +16,7 @@ Use the `cli` profile to run the command line interface version of the app,
 which will show a tabular view of records:
 
 ```
-$ lein cli -- resources/test.csv resources/test.psv resources/test.ssv --sort-by date-asc --ignore-errors
+$ lein cli -- resources/test.csv resources/test.psv resources/test.ssv --sort-by birthdate --ignore-errors
 
 | :last-name | :first-name |   :gender | :favorite-color | :date-of-birth |
 |------------+-------------+-----------+-----------------+----------------|
@@ -38,7 +38,7 @@ the app will refuse to proceed. Valid data meets the following criteria:
 - Gender is one of "male", "female", "nonbinary", or "other".
 - Birthday is in the format MM/dd/yyyy (e.g. "08/16/1984")
 
-To see a list of available options, run `lein cli -- --help`.
+To see a list of available options, including sort modes, run `lein cli -- --help`.
 
 ### Web API
 
@@ -54,8 +54,8 @@ To see the available records:
 
 ```
 $ curl http://localhost:3000/records/gender
-$ curl http://localhost:3000/records/date-asc
-$ curl http://localhost:3000/records/date-desc
+$ curl http://localhost:3000/records/birthdate
+$ curl http://localhost:3000/records/name
 ```
 
 To add a record, POST a line of plain text in the formats described in

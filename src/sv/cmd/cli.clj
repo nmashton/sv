@@ -6,11 +6,11 @@
             [sv.util :refer [error-msg exit help-message]]))
 
 (def opts
-  [["-s" "--sort-by SORT-TYPE" "Sort by (gender, date-asc, date-desc)"
+  [["-s" "--sort-by SORT-TYPE" "Sort by (gender, birthdate, name"
     :default :gender
     :parse-fn keyword
-    :validate [#{:gender :date-asc :date-desc}
-               "Must be one of gender, date-asc, or date-desc"]]
+    :validate [#{:gender :birthdate :name}
+               "Must be one of gender, birthdate, or name"]]
    ["-i" "--ignore-errors" "Ignore errors"]
    ["-h" "--help" "Display this help message"]])
 

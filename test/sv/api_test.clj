@@ -16,8 +16,8 @@
              (sorter @store))))))
 (deftest sorted-or-404
   (is (check-with-key-and-sorter "gender" model/sort-by-gender-and-last-name))
-  (is (check-with-key-and-sorter "date-asc" model/sort-by-date-asc))
-  (is (check-with-key-and-sorter "date-desc" model/sort-by-date-desc))
+  (is (check-with-key-and-sorter "birthdate" model/sort-by-birthdate))
+  (is (check-with-key-and-sorter "name" model/sort-by-name))
   (is (= (api/sorted-or-404 {:params {:sort-by "invalid"}})
          api/not-found)))
 

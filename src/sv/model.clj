@@ -51,22 +51,24 @@
   (sort-by #(vec [(::gender %) (::last-name %)])
            records))
 
-(defn sort-by-date-asc
+(defn sort-by-name
+  [records]
+  (reverse (sort-by #(vec [(::last-name %) (::first-name %)])
+                    records)))
+
+(defn sort-by-birthdate
   [records]
   (sort-by ::date-of-birth records))
 
-(def sort-by-date-desc
-  (comp reverse sort-by-date-asc))
-
 (def -sorters
   {:gender sort-by-gender-and-last-name
-   :date-asc sort-by-date-asc
-   :date-desc sort-by-date-desc
-   :default sort-by-gender-and-last-name})
+   :birthdate sort-by-birthdate
+   :name sort-by-name
+   :default sort-by-name})
 
 (defn sorter-for-key
   ([]
-   sort-by-gender-and-last-name)
+   (get -sorters :default))
   ([sort-key]
    (if-let [sorter (get -sorters sort-key)]
      sorter
