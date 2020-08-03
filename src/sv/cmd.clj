@@ -55,7 +55,7 @@
 (defn handle-filenames
   [filenames options]
   (let [[records errors] (parse/combine-parse-results (map file/parse-filename filenames))
-        sorter (get file/sorters (:sort-by options))]
+        sorter (get model/sorters (:sort-by options))]
     (if (and (seq errors)
              (not (:ignore-errors options)))
       (exit 1 (error-msg ["Some files had errors."])) ; TODO: say more!!

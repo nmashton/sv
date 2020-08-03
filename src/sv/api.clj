@@ -61,7 +61,7 @@
    404 if the sort scheme is invalid."
   [{{sort-by :sort-by} :params
     :as req}]
-  (if-let [sorter (get file/sorters (keyword sort-by))]
+  (if-let [sorter (get model/sorters (keyword sort-by))]
     (display-records-handler (assoc req :sort-by sorter))
     not-found))
 
@@ -111,7 +111,7 @@
 (defn init-data
   []
   (let [[records _errors] (parse/combine-parse-results (map file/parse-filename default-filenames))
-        sorter (get file/sorters :default)]
+        sorter (get model/sorters :default)]
     (sorter records)))
 
 (defn -main [& args]

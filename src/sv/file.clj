@@ -1,18 +1,11 @@
 (ns sv.file
   (:require [clojure.java.io :as io]
-            [sv.model :as model]
             [sv.parse :as parse]))
 
 (def separators
   {::csv ","
    ::psv "\\n"
    ::ssv " "})
-
-(def sorters
-  {:gender model/sort-by-gender-and-last-name
-   :date-asc model/sort-by-date-asc
-   :date-desc model/sort-by-date-desc
-   :default model/sort-by-gender-and-last-name})
 
 (defn filename->fmt
   [filename]

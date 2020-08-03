@@ -19,11 +19,11 @@
 
 (deftest filenames->errors
   (is (file/filenames->errors ["foo.bar"]))
-  (is (let [temp-file (java.io.File/createTempFile "file" ".bad-extension")]
-        (try
-          (file/filenames->errors [(.getAbsolutePath temp-file)])
-          (finally (.delete temp-file)
-                   nil))))
+  (is (not (empty (let [temp-file (java.io.File/createTempFile "file" ".bad-extension")]
+                    (try
+                      (file/filenames->errors [(.getAbsolutePath temp-file)])
+                      (finally (.delete temp-file)
+                               nil))))))
   (is (empty? (let [temp-file (java.io.File/createTempFile "file" ".csv")]
                 (try
                   (doall (file/filenames->errors [(.getAbsolutePath temp-file)]))

@@ -57,3 +57,8 @@
 
 (def sort-by-date-desc
   (comp reverse sort-by-date-asc))
+
+(def sorters
+  {:gender sort-by-gender-and-last-name
+   :date-asc sort-by-date-asc
+   :date-desc sort-by-date-desc})
