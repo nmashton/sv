@@ -72,22 +72,16 @@
    [nil nil]
    results-and-errors))
 
-(defn combine-results
-  "Reducer function to combine all results
-   of parsing into two vectors (valid results
-   and errors)."
-  [[rs es] {errors ::errors :as data}]
-  (if errors
-    [rs (conj es data)]
-    [(conj rs data) es]))
-
 (defn parse-lines
   "Splits, parses, and groups the lines from an
    input sequence into the expected collections of
    records."
   [lines separator]
   (reduce
-   combine-results
+   (fn [[rs es] {errors ::errors :as data}]
+     (if errors
+       [rs (conj es data)]
+       [(conj rs data) es]))
    [nil nil]
    (eduction
     (map #(string/split % (re-pattern separator)))
