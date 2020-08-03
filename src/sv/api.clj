@@ -63,6 +63,8 @@
     (sorter records)))
 
 (defn init-handler
+  "Creates a handler function with an injected
+   state atom to store records."
   []
   (let [store (atom (init-data))]
     (with-extra records-api :store store)))
