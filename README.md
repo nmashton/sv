@@ -2,7 +2,8 @@
 
 A simple Clojure app to do two things:
 
-- Parse structured text files with an expected structure into a collection of records, then display those records sorted in one of three ways
+- Parse structured text files with an expected structure into a collection of records,
+  then display those records sorted in one of three ways
 - Expose a web API to create and browse an (in-memory) collection of such records
 
 ## Usage
@@ -15,7 +16,16 @@ Use the `cli` profile to run the command line interface version of the app,
 which will show a tabular view of records:
 
 ```
-$ lein cli -- --ignore-errors resources/test.csv resources/test.psv resources/test.ssv --sort-by date-asc
+$ lein cli -- resources/test.csv resources/test.psv resources/test.ssv --sort-by date-asc --ignore-errors
+
+| :last-name | :first-name |   :gender | :favorite-color | :date-of-birth |
+|------------+-------------+-----------+-----------------+----------------|
+|   Blashton |        Neil |      male |         crimson |     08/16/1984 |
+|     Ashton |        Neil | nonbinary |          indigo |     08/17/1984 |
+|   Drashton |        Neil |    female |         crimson |     08/18/1984 |
+|   Smashton |        Neil | nonbinary |          indigo |     08/19/1984 |
+|  mBrashton |        Neil |      male |         crimson |     08/20/1984 |
+|    Yashton |        Neil |    female |          indigo |     08/21/1984 |
 ```
 
 If the `--ignore-errors` flag is not included and the files provided are malformed,
@@ -54,7 +64,7 @@ If successful, the resulting entity will be echoed back at you:
 
 ```
 $ curl -X POST -H "Content-Type: text/plain" --data "West,Iris,female,blue,02/23/1976" http://localhost:3000/records/
-$ curl -X POST -H "Content-Type: text/plain" --data "West|Wally|male|yellow|02/23/1986" http://localhost:3000/records/
+$ curl -X POST -H "Content-Type: text/plain" --data "West|Wally|male|yellow|02/23/1997" http://localhost:3000/records/
 $ curl -X POST -H "Content-Type: text/plain" --data "Allen Barry male red 05/13/1978" http://localhost:3000/records/
 ```
 
