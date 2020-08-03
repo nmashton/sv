@@ -4,7 +4,8 @@
             [clojure.tools.cli :refer [parse-opts]]
             [sv.file :as file]
             [sv.model :as model]
-            [sv.parse :as parse]))
+            [sv.parse :as parse]
+            [sv.util :refer [error-msg exit]]))
 
 (def opts
   [["-s" "--sort-by SORT-TYPE" "Sort by (gender, date-asc, date-desc)"
@@ -26,11 +27,6 @@
         options-summary]
        (string/join \newline)))
 
-(defn error-msg
-  [errors]
-  (str "The following errors occurred while parsing your command:\n\n"
-       (string/join \newline errors)))
-
 (defn validate-args
   [args]
   (let [{:keys [options arguments errors summary]} (parse-opts args opts)]
@@ -47,15 +43,10 @@
              :filenames arguments
              :options options})))
 
-(defn exit
-  [status msg]
-  (println msg)
-  (System/exit status))
-
 (defn handle-filenames
   [filenames options]
-  (let [[records errors] (parse/combine-parse-results (map file/parse-filename filenames))
-        sorter (get model/sorters (:sort-by options))]
+  (let [[records errors] (parse/combine-parse-results (map parse/parse-filename filenames))
+        sorter (model/sorter-for-key (:sort-by options))]
     (if (and (seq errors)
              (not (:ignore-errors options)))
       (exit 1 (error-msg ["Some files had errors."])) ; TODO: say more!!

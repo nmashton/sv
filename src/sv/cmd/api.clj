@@ -1,6 +1,5 @@
 (ns sv.cmd.api
-  (:require [cheshire.core :refer [generate-string]]
-            [clojure.string :as string]
+  (:require [clojure.string :as string]
             [clojure.tools.cli :refer [parse-opts]]
             [compojure.core :refer [defroutes GET POST]]
             [compojure.route :as route]
@@ -8,7 +7,7 @@
             [ring.util.request :refer [body-string]]
             [sv.model :as model]
             [sv.parse :as parse]
-            [sv.file :as file]))
+            [sv.util :refer [error-msg exit json-response with-extra]]))
 
 (def opts
   [["-h" "--help" "Display this help message"]])
@@ -22,11 +21,6 @@
         options-summary]
        (string/join \newline)))
 
-(defn error-msg
-  [errors]
-  (str "The following errors occurred while parsing your command:\n\n"
-       (string/join \newline errors)))
-
 (defn validate-args
   [args]
   (let [{:keys [options errors summary]} (parse-opts args opts)]
@@ -35,20 +29,6 @@
                        :ok? true}
       errors {:exit-message (error-msg errors)}
       :else {:start-server? true})))
-
-(defn exit
-  [status msg]
-  (println msg)
-  (System/exit status))
-
-(defn display-records-handler
-  [{:keys [store sort-by]}]
-  {:status 200
-   :headers {"content-type" "application/json"}
-   :body (str
-          (generate-string (map model/record->display (sort-by @store))
-                           {:pretty true})
-          "\n")})
 
 (def not-found
   {:status 404
@@ -60,9 +40,10 @@
    the sort scheme given in the parameters or return
    404 if the sort scheme is invalid."
   [{{sort-by :sort-by} :params
-    :as req}]
+    store :store}]
   (if-let [sorter (model/sorter-for-key (keyword sort-by) nil)]
-    (display-records-handler (assoc req :sort-by sorter))
+    (json-response (map model/record->display
+                        (sorter @store)))
     not-found))
 
 (defn add-or-400
@@ -79,29 +60,17 @@
    the result."
   [{:keys [store] :as req}]
   (let [raw-line (body-string req)]
-    (if-let [fmt (file/guess-format raw-line)]
-      (let [{data :sv.parse/data} (parse/parse-raw-line raw-line (get file/separators fmt))]
-        (if data
-          (do
-            (swap! store #(conj % data))
-            (str (generate-string (model/record->display data)) "\n"))
-          {:status 400
-           :body "Errors in input\n"}))
+    (if-let [{data :sv.parse/data} (parse/parse-raw-line raw-line)]
+      (do
+        (swap! store #(conj % data))
+        (model/record->json data))
       {:status 400
-       :body "Can't guess input format\n"})))
+       :body "Errors in input\n"})))
 
 (defroutes records-api
   (POST "/records/" req (add-or-400 req))
   (GET "/records/:sort-by" req (sorted-or-404 req))
   (route/not-found not-found))
-
-(defn with-extra
-  "Add some extra data to the handler's context.
-   Useful for passing in (for example) some simple
-   server state."
-  [handler key val]
-  (fn [req]
-    (handler (assoc req key val))))
 
 (def default-filenames
   ["resources/test.csv"
@@ -111,7 +80,7 @@
 (defn init-data
   []
   (let [[records _errors]
-        (parse/combine-parse-results (map file/parse-filename
+        (parse/combine-parse-results (map parse/parse-filename
                                           default-filenames))
         sorter (model/sorter-for-key)]
     (sorter records)))

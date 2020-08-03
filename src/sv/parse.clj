@@ -2,6 +2,7 @@
   (:require [clojure.java.io :as io]
             [clojure.spec.alpha :as s]
             [clojure.string :as string]
+            [sv.file :as file]
             [sv.model :refer []]
             [sv.util :refer [date-string->local-date]]))
 
@@ -97,10 +98,14 @@
 (defn parse-raw-line
   "Apply the same parsing logic as is found in parse-lines
    to a raw line of text."
-  [raw-line separator]
-  (as-> raw-line line
-      (string/split line (re-pattern separator))
-      (validate-and-parse ::line line)))
+  ([raw-line separator]
+   (as-> raw-line line
+     (string/split line (re-pattern separator))
+     (validate-and-parse ::line line)))
+  ([raw-line]
+   (if-let [separator (file/guess-separator raw-line)]
+     (parse-raw-line raw-line separator)
+     nil)))
 
 (defn prep-for-cmd
   "Given data with the shape of the output of parse-lines
@@ -123,3 +128,7 @@
   (with-open [r (io/reader filename)]
     (prep-for-cmd (parse-lines (line-seq r) separator)
                   filename)))
+
+(defn parse-filename
+  [filename]
+  (parse-file filename (file/filename->separator filename)))

@@ -1,5 +1,6 @@
 (ns sv.util
-  (:require [clojure.spec.alpha :as s]
+  (:require [cheshire.core :refer [generate-string]]
+            [clojure.spec.alpha :as s]
             [clojure.spec.gen.alpha :as gen]
             [clojure.string :as string]
             [java-time :as jt]))
@@ -68,3 +69,32 @@
   (try
     (jt/local-date "MM/dd/yyyy" date-string)
     (catch Exception _ nil)))
+
+(defn exit
+  "Print a message and exit with a given status."
+  [status msg]
+  (println msg)
+  (System/exit status))
+
+(defn error-msg
+  "Format a vector of errors as a string and display it
+   with an explanatory prefix."
+  [errors]
+  (str "The following errors occurred while parsing your command:\n\n"
+       (string/join \newline errors)))
+
+(defn json-response
+  [data]
+  {:status 200
+   :headers {"content-type" "application/json"}
+   :body (str
+          (generate-string data {:pretty true})
+          \newline)})
+
+(defn with-extra
+  "Add some extra data to the handler's context.
+   Useful for passing in (for example) some simple
+   server state."
+  [handler key val]
+  (fn [req]
+    (handler (assoc req key val))))

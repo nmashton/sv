@@ -1,5 +1,6 @@
 (ns sv.model
-  (:require [clojure.spec.alpha :as s]
+  (:require [cheshire.core :refer [generate-string]]
+            [clojure.spec.alpha :as s]
             [java-time :as jt]
             [sv.util :refer [date-string-gen date-gen]]))
 
@@ -75,3 +76,10 @@
    (if-let [sorter (get -sorters sort-key)]
      sorter
      default)))
+
+(defn record->json
+  [record]
+  (-> record
+      record->display
+      (generate-string {:pretty true})
+      (str \newline)))
