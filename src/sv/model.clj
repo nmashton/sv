@@ -37,6 +37,8 @@
            (count ret))))
 
 (defn record->display
+  "Transforms a record into a map with unqualified keys
+   suitable for printing as a JSON string."
   [{::keys [last-name first-name gender favorite-color date-of-birth]}]
   {:last-name last-name
    :first-name first-name
@@ -78,5 +80,4 @@
   [record]
   (-> record
       record->display
-      generate-string
-      (str \newline)))
+      generate-string))

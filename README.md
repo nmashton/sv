@@ -35,7 +35,7 @@ the app will refuse to proceed. Valid data meets the following criteria:
 - A file with a given extension contains five pieces of data per line, separated
   by the appropriate separator: "," for .csv, "|" for .psv, and " " for .csv
 - The fields are in the order: last name, first name, gender, favorite color, birthday
-- Gender is one of "male", "female", or "nonbinary"
+- Gender is one of "male", "female", "nonbinary", or "other".
 - Birthday is in the format MM/dd/yyyy (e.g. "08/16/1984")
 
 To see a list of available options, run `lein cli -- --help`.
@@ -75,6 +75,15 @@ If there are problems with the input (see the previous section for possible issu
 $ curl -X POST -H "Content-Type: text/plain" --data "Thawne Eobard male green 05-12-2478" http://localhost:3000/records/
 Errors in input
 ```
+
+## Coverage
+
+This project uses [Cloverage](https://github.com/cloverage/cloverage) to gauge test
+coverage. To run all tests and see the coverage report, run `lein cloverage`.
+
+However, given that the project divides into a functional core and an
+application-logic shell, it may be more useful to look exclusively at the
+coverage for the former by running `lein cloverage -e "sv\.cmd\..+"`.
 
 ## License
 

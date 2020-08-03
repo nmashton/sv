@@ -51,4 +51,4 @@
   (is (= (model/record->json (first example-records))
          (str "{\"last-name\":\"Ashton\",\"first-name\":\"Neil\","
               "\"gender\":\"male\",\"favorite-color\":\"indigo\","
-              "\"date-of-birth\":\"08/16/1984\"}\n"))))
+              "\"date-of-birth\":\"08/16/1984\"}"))))
