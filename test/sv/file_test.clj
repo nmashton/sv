@@ -17,15 +17,14 @@
   (is (nil? (file/guess-format "not a valid ssv")))
   (is (nil? (file/guess-format "just ..... some gibberish"))))
 
+(defn check-file-with-extension
+  [extension]
+  (let [temp-file (java.io.File/createTempFile "file" extension)
+        path (.getAbsolutePath temp-file)]
+    (try
+      (doall (file/filenames-with-errors [path]))
+      (finally (.delete temp-file)))))
 (deftest filenames-with-errors
   (is (file/filenames-with-errors ["foo.bar"]))
-  (is (seq (let [temp-file (java.io.File/createTempFile "file" ".bad-extension")
-                 path (.getAbsolutePath temp-file)]
-             (try
-               (doall (file/filenames-with-errors [path]))
-               (finally (.delete temp-file))))))
-  (is (empty? (let [temp-file (java.io.File/createTempFile "file" ".csv")
-                    path (.getAbsolutePath temp-file)]
-                (try
-                  (doall (file/filenames-with-errors [path]))
-                  (finally (.delete temp-file)))))))
+  (is (seq (check-file-with-extension ".bad-extension")))
+  (is (empty? (check-file-with-extension ".csv"))))
