@@ -21,8 +21,8 @@
 (defn guess-format
   [raw-line]
   (cond
-    (re-matches #"^(\S+,){4}\S+$" raw-line) ::csv
-    (re-matches #"^(\S+\|){4}\S+$" raw-line) ::psv
+    (re-matches #"^([^,]+,){4}[^,]+$" raw-line) ::csv
+    (re-matches #"^([^\|]+\|){4}[^\|]+$" raw-line) ::psv
     (re-matches #"^(\S+ ){4}\S+$" raw-line) ::ssv
     :else nil))
 

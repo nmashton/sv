@@ -9,8 +9,8 @@
   (is (nil? (file/filename->fmt "qux.xml"))))
 
 (deftest guess-format
-  (is (= :sv.file/csv (file/guess-format "foo,bar,baz,qux,norf")))
-  (is (= :sv.file/psv (file/guess-format "foo|bar|baz|qux|norf")))
+  (is (= :sv.file/csv (file/guess-format "foo 123,bar abc,baz 456,qux def,norf 789")))
+  (is (= :sv.file/psv (file/guess-format "foo 123|bar abc|baz 456|qux def|norf 789")))
   (is (= :sv.file/ssv (file/guess-format "foo bar baz qux norf")))
   (is (nil? (file/guess-format "not,a,valid,csv")))
   (is (nil? (file/guess-format "not|a|valid|psv")))
