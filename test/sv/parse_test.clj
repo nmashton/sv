@@ -1,9 +1,8 @@
 (ns sv.parse-test
-  (:require [clojure.string :as string]
-            [clojure.test :refer [deftest is]]
+  (:require [clojure.test :refer [deftest is]]
             [java-time :as jt]
             [sv.parse :as parse]
-            [sv.testutil :refer [valid-quickchecked?]]))
+            [sv.testutil :refer [example-data valid-quickchecked?]]))
 
 (deftest parse-lines
   (is (valid-quickchecked? 'sv.parse/parse-lines)))
@@ -19,16 +18,6 @@
   (is (= (parse/prep-for-cmd example-results-errors "test-data")
          ['(:valid-data-a :valid-data-b)
           ["test-data" '(1 2 3)]])))
-
-(defn example-data
-  [separator]
-  (string/join
-   "\n"
-   (map (fn [strs] (string/join separator strs))
-        [["Ashton" "Neil" "nonbinary" "indigo" "08/17/1984"]
-         ["Blashton" "Neil" "male" "crimson" "08/16/1984"]
-         ["malformed" "line"]
-         ["Clashton" "Neil" "male" "crimson" "08/16/1984" "malforming"]])))
 
 (defn gen-example-parse-result
   [filename]

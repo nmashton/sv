@@ -3,7 +3,7 @@
 
 (def separators
   {::csv ","
-   ::psv "\\n"
+   ::psv "\\|"
    ::ssv " "})
 
 (defn filename->fmt

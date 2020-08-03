@@ -36,12 +36,13 @@
    the result."
   [{:keys [store] :as req}]
   (let [raw-line (body-string req)]
-    (if-let [{data :sv.parse/data} (parse/parse-raw-line raw-line)]
-      (do
-        (swap! store #(conj % data))
-        (model/record->json data))
-      {:status 400
-       :body "Errors in input\n"})))
+    (let [{data :sv.parse/data} (parse/parse-raw-line raw-line)]
+      (if data
+        (do
+          (swap! store #(conj % data))
+          (model/record->json data))
+        {:status 400
+         :body "Errors in input\n"}))))
 
 (defroutes records-api
   (POST "/records/" req (add-or-400 req))
