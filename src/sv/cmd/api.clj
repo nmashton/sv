@@ -1,31 +1,31 @@
 (ns sv.cmd.api
-  (:require [clojure.string :as string]
-            [clojure.tools.cli :refer [parse-opts]]
+  (:require [clojure.tools.cli :refer [parse-opts]]
             [compojure.core :refer [defroutes GET POST]]
             [compojure.route :as route]
             [ring.adapter.jetty :as jetty]
             [ring.util.request :refer [body-string]]
             [sv.model :as model]
             [sv.parse :as parse]
-            [sv.util :refer [error-msg exit json-response with-extra]]))
+            [sv.util :refer [error-msg
+                             exit
+                             help-message
+                             json-response
+                             with-extra]]))
 
 (def opts
   [["-h" "--help" "Display this help message"]])
 
-(defn help-message
-  [options-summary]
-  (->> ["Launches a web server to receive and display records"
-        "sorted by a specified sorter."
-        ""
-        "Options:"
-        options-summary]
-       (string/join \newline)))
+(def help-lines
+  ["Launches a web server to receive and display records"
+   "sorted by a specified sorter."
+   ""
+   "Options:"])
 
 (defn validate-args
   [args]
   (let [{:keys [options errors summary]} (parse-opts args opts)]
     (cond
-      (:help options) {:exit-message (help-message summary)
+      (:help options) {:exit-message (help-message help-lines summary)
                        :ok? true}
       errors {:exit-message (error-msg errors)}
       :else {:start-server? true})))

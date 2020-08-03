@@ -1,11 +1,10 @@
 (ns sv.cmd.cli
   (:require [clojure.pprint :refer [print-table]]
-            [clojure.string :as string]
             [clojure.tools.cli :refer [parse-opts]]
             [sv.file :as file]
             [sv.model :as model]
             [sv.parse :as parse]
-            [sv.util :refer [error-msg exit]]))
+            [sv.util :refer [error-msg exit help-message]]))
 
 (def opts
   [["-s" "--sort-by SORT-TYPE" "Sort by (gender, date-asc, date-desc)"
@@ -16,22 +15,19 @@
    ["-i" "--ignore-errors" "Ignore errors"]
    ["-h" "--help" "Display this help message"]])
 
-(defn help-message
-  [options-summary]
-  (->> ["Prints a collection of records extracted from a file in"
-        "a 'separated values' format (comma-separated, pipe-separated,"
-        "or space-separated), sorted according to either gender,"
-        "date ascending, or date descending."
-        ""
-        "Options:"
-        options-summary]
-       (string/join \newline)))
+(def help-lines
+  ["Prints a collection of records extracted from a file in"
+   "a 'separated values' format (comma-separated, pipe-separated,"
+   "or space-separated), sorted according to either gender,"
+   "date ascending, or date descending."
+   ""
+   "Options:"])
 
 (defn validate-args
   [args]
   (let [{:keys [options arguments errors summary]} (parse-opts args opts)]
     (cond
-      (:help options) {:exit-message (help-message summary)
+      (:help options) {:exit-message (help-message help-lines summary)
                        :ok? true}
       errors {:exit-message (error-msg errors)}
       (not (seq args))

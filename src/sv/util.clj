@@ -76,6 +76,11 @@
   (println msg)
   (System/exit status))
 
+(defn help-message
+  [help-lines options-summary]
+  (->> (conj help-lines options-summary)
+       (string/join \newline)))
+
 (defn error-msg
   "Format a vector of errors as a string and display it
    with an explanatory prefix."
