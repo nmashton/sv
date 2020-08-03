@@ -1,7 +1,7 @@
 (ns sv.file
-  (:require [sv.model :as model])
-  (:require [sv.parse :as parse])
-  (:require [clojure.java.io :as io]))
+  (:require [clojure.java.io :as io]
+            [sv.model :as model]
+            [sv.parse :as parse]))
 
 (def separators
   {:csv ","

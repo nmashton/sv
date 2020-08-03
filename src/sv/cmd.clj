@@ -1,10 +1,10 @@
 (ns sv.cmd
-  (:require [clojure.tools.cli :refer [parse-opts]])
-  (:require [clojure.string :as string])
-  (:require [clojure.pprint :refer [print-table]])
-  (:require [sv.model :as model])
-  (:require [sv.parse :as parse])
-  (:require [sv.file :as file]))
+  (:require [clojure.pprint :refer [print-table]]
+            [clojure.string :as string]
+            [clojure.tools.cli :refer [parse-opts]]
+            [sv.file :as file]
+            [sv.model :as model]
+            [sv.parse :as parse]))
 
 (def opts
   [["-s" "--sort-by SORT-TYPE" "Sort by (gender, date-asc, date-desc)"

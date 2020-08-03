@@ -1,9 +1,9 @@
 (ns sv.parse
-  (:require [sv.model :refer []])
-  (:require [clojure.spec.alpha :as s])
-  (:require [clojure.string :as string])
-  (:require [clojure.java.io :as io])
-  (:require [sv.util :refer [date-string->local-date]]))
+  (:require [clojure.java.io :as io]
+            [clojure.spec.alpha :as s]
+            [clojure.string :as string]
+            [sv.model :refer []]
+            [sv.util :refer [date-string->local-date]]))
 
 (s/def ::line (s/cat :sv.model/last-name :sv.model/last-name
                      :sv.model/first-name :sv.model/first-name

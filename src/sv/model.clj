@@ -1,7 +1,7 @@
 (ns sv.model
-  (:require [clojure.spec.alpha :as s])
-  (:require [sv.util :refer [date-string-gen date-gen]])
-  (:require [java-time :as jt]))
+  (:require [clojure.spec.alpha :as s]
+            [java-time :as jt]
+            [sv.util :refer [date-string-gen date-gen]]))
 
 (s/def ::last-name string?)
 (s/def ::first-name string?)

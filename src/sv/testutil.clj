@@ -1,6 +1,6 @@
 (ns sv.testutil
-  (:require [clojure.spec.test.alpha :as st])
-  (:require [clojure.pprint :as pp]))
+  (:require [clojure.pprint :as pp]
+            [clojure.spec.test.alpha :as st]))
 
 (defn valid-quickchecked?
   "Helper to wrap quickcheck calls in unit tests."

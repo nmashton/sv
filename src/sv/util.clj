@@ -1,8 +1,8 @@
 (ns sv.util
-  (:require [clojure.string :as string])
-  (:require [clojure.spec.alpha :as s])
-  (:require [clojure.spec.gen.alpha :as gen])
-  (:require [java-time :as jt]))
+  (:require [clojure.spec.alpha :as s]
+            [clojure.spec.gen.alpha :as gen]
+            [clojure.string :as string]
+            [java-time :as jt]))
 
 (defn date-string=local-date?
   "Compares a given datestring formatted by MM/dd/yyyy

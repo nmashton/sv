@@ -1,8 +1,8 @@
 (ns sv.model-test
-  (:require [clojure.test :as t])
-  (:require [sv.model :as model])
-  (:require [clojure.spec.alpha :as s])
-  (:require [java-time :as jt]))
+  (:require [clojure.spec.alpha :as s]
+            [clojure.test :refer [deftest is]]
+            [java-time :as jt]
+            [sv.model :as model]))
 
 (def example-records
   [{:sv.model/last-name "Ashton"
@@ -35,23 +35,23 @@
 ; Generative testing is causing me issues, so in order to not lose
 ; further time to it, I'm going to use some example-based tests
 ; and move on.
-(t/deftest display-date
-  (t/is (s/valid? :sv.model/record (first example-records)))
-  (t/is (s/valid? :sv.model/display (model/record->display  (first example-records))))
-  (t/is (= example-display
-           (model/record->display  (first example-records)))))
+(deftest display-date
+  (is (s/valid? :sv.model/record (first example-records)))
+  (is (s/valid? :sv.model/display (model/record->display  (first example-records))))
+  (is (= example-display
+         (model/record->display  (first example-records)))))
 
-(t/deftest sort-by-gender-and-last-name
-  (t/is (= ["Bashton" "Ashton" "Dashton" "Cashton"]
-           (map :sv.model/last-name
-                (model/sort-by-gender-and-last-name example-records)))))
+(deftest sort-by-gender-and-last-name
+  (is (= ["Bashton" "Ashton" "Dashton" "Cashton"]
+         (map :sv.model/last-name
+              (model/sort-by-gender-and-last-name example-records)))))
 
-(t/deftest sort-by-date-asc
-  (t/is (= ["Dashton" "Cashton" "Bashton" "Ashton"]
-           (map :sv.model/last-name
-                (model/sort-by-date-asc example-records)))))
+(deftest sort-by-date-asc
+  (is (= ["Dashton" "Cashton" "Bashton" "Ashton"]
+         (map :sv.model/last-name
+              (model/sort-by-date-asc example-records)))))
 
-(t/deftest sort-by-date-desc
-  (t/is (= ["Ashton" "Bashton" "Cashton" "Dashton"]
-           (map :sv.model/last-name
-                (model/sort-by-date-desc example-records)))))
+(deftest sort-by-date-desc
+  (is (= ["Ashton" "Bashton" "Cashton" "Dashton"]
+         (map :sv.model/last-name
+              (model/sort-by-date-desc example-records)))))
